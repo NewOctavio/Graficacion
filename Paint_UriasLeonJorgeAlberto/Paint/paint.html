@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="paint.css">
+    <title>Paint URIAS LEON JORGE ALBERTO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+  </head>
+  <body>
+    <main>
+      <canvas id="canvas" width="800" height="550"></canvas>
+      <h5>Los botones de las capas si funcionan, solo que tiene que dar click al boton, despues doble click a la figura y por ultimo otra vez click al mismo boton</h5>
+      <div id="shapes-buttons">
+        <button onclick="drawMode = 'text';" title="Texto"><img src="iconos/text.svg" alt="Texto"></button>   
+        <button onclick="drawMode = 'pencil';" title="Lapiz"><img src="iconos/pencil.svg" alt="Lapiz"></button>
+        <button onclick="drawMode = 'eraser';" title="Borrador"><img src="iconos/eraser.svg" alt="Borrador"></button>
+        <button onclick="drawMode = 'line';" title="Linea Recta"><img src="iconos/linear.svg" alt="Linea Recta"></button>
+        <button onclick="drawMode = 'square';" title="Cuadrado"><img src="iconos/square.svg" alt="Cuadrado"></button>
+        <button onclick="drawMode = 'rectangle';" title="Rectangulo"><img src="iconos/rectangle.svg" alt="Rectangulo"></button>
+        <button onclick="drawMode = 'circle';" title="Circulo"><img src="iconos/circle.svg" alt="Circulo"></button>   
+        <button onclick="drawMode = 'ellipse';" title="Elipse"><img src="iconos/ellipse.svg" alt="Elipse"></button>
+        <button onclick="drawMode = 'rhombus';" title="Rombo"><img src="iconos/rhombus.svg" alt="Rombo"></button>   
+        <button onclick="drawMode = 'trapezoid';" title="Trapecio"><img src="iconos/trapezoid.svg" alt="Trapecio"></button> 
+        <button onclick="drawMode = 'polygone';" title="Poligono Regular"><img src="iconos/polygon.svg" alt="Poligono Regular"></button>   
+        <input id="polygon-sides" placeholder="Lados">
+      </div>
+      <div id="color-buttons">
+        <div class="color-row">
+          <button style="background-color: black;" onclick="changeColor('black')"></button>
+          <button style="background-color: gray;" onclick="changeColor('gray')"></button>
+          <button style="background-color: darkred;" onclick="changeColor('darkred')"></button>
+          <button style="background-color: red;" onclick="changeColor('red')"></button>
+          <button style="background-color: orange;" onclick="changeColor('orange')"></button>
+          <button style="background-color: yellow;" onclick="changeColor('yellow')"></button>
+          <button style="background-color: green;" onclick="changeColor('green')"></button>
+          <button style="background-color: turquoise;" onclick="changeColor('turquoise')"></button>
+          <button style="background-color: indigo;" onclick="changeColor('indigo')"></button>
+          <button style="background-color: purple;" onclick="changeColor('purple')"></button>
+        </div>
+        <div class="color-row">
+          <button style="background-color: white;" onclick="changeColor('white')"></button> 
+          <button style="background-color: lightgray;" onclick="changeColor('lightgray')"></button>
+          <button style="background-color: brown;" onclick="changeColor('brown')"></button>
+          <button style="background-color: pink;" onclick="changeColor('pink')"></button>
+          <button style="background-color: gold;" onclick="changeColor('gold')"></button>      
+          <button style="background-color: lightyellow;" onclick="changeColor('lightyellow')"></button>      
+          <button style="background-color: lime;" onclick="changeColor('lime')"></button>      
+          <button style="background-color: lightsteelblue;" onclick="changeColor('lightsteelblue')"></button>      
+          <button style="background-color: teal;" onclick="changeColor('teal')"></button>      
+          <button style="background-color: lavender;" onclick="changeColor('lavender')"></button>      
+        </div>
+        <div id="thickness-select">
+          <label for="thickness">Grosor:</label>
+          <select id="thickness" onchange="changeThickness(this.value)">
+            <option value="1">1 px</option>
+            <option value="3">3 px</option>
+            <option value="5">5 px</option>
+            <option value="8">8 px</option>
+          </select>
+        </div>
+      </div>
+      <div id="undo-redo-buttons">
+        <button id="undoButton" title="Retroceder"><img src="iconos/arrow-back.svg"></button>
+        <button id="redoButton" title="Avanzar"><img src="iconos/arrow-next.svg"></button>
+        <button id="hand" title="Agarrar"><img src="iconos/hand.svg"></button>
+        <button id="scale" title="Redimensionar"><img src="iconos/size.svg"></button>
+        <button id="rotate" title="Rotar"><img src="iconos/rotate.svg"></button>
+        <button id="fill" title="Relleno"><img src="iconos/paint-bucket.svg"></button>
+        <button id="layerLower" title="Capa abajo"><img src="iconos/layer-lower.svg"></button>
+        <button id="layerRaise" title="Capa arriba"><img src="iconos/layer-raise.svg"></button>
+        <button id="layerBottom" title="Capa al fondo"><img src="iconos/layer-bottom.svg"></button>
+        <button id="layerTop" title="Capa al tope"><img src="iconos/layer-top.svg"></button>
+        <button id="saveData" title="Guardar data del canvas" onclick="saveData()"><img src="iconos/save.svg"></button>
+        <input type="file" id="fileInput" style="display: none;">
+        <button id="openData" title="Abrir data del canvas" onclick="openData()"><img src="iconos/open-file.svg"></button>
+        <button id="clear" title="Limpiar canvas" onclick="clearCanvas()"><img src="iconos/clear-canvas.svg"></button>
+        <button id="preview" title="Previsualizar" onclick="previewCanvas()"><img src="iconos/preview.svg"></button>
+        <button id="pdf" title="Guardar canvas como PDF" onclick="saveAsPDF()"><img src="iconos/pdf.svg"></button>
+        <button id="png" title="Guardar canvas como PNG" onclick="saveAsPNG()"><img src="iconos/png.svg"></button>
+        <input type="text" id="namePNG" placeholder="Nombre del archivo">
+      </div>
+    </main>
+    <script src="paint.js"></script>
+  </body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>Paint PRO JIJOJA</title>
+</head>
+<body>
+<div class="paintPROJIJOJA">
+    <div class="side">
+        <div class="contonedor-menu">
+            <header>
+                <span class="title">Colores:</span>
+                <span class="pincel"></span>
+            </header>
+            <div class="descripcion">
+                <div class="colores">
+                    <button class="color negro" value="negro"></button>
+                    <button class="color rojo" value="rojo"></button>
+                    <button class="color amarillo" value="amarillo"></button>
+                    <button class="color verde" value="verde"></button>
+                    <button class="color gris" value="gris"></button>
+                    <button class="color azul" value="azul"></button>
+                    <input type="color" class="color picker" id="picker">
+                </div>
+            </div>
+        </div>
+        <div class="contonedor-menu">
+            <header>
+                <span class="title">Figuras:</span>
+                <span class="figuras"></span>
+            </header>
+            <div class="descripcion">
+                <div class="seleccion-figuras">
+                    <button  value="square" data-divbtn="cuadrado">square</button>
+                    <button  value="rectangle" data-divbtn="rectangulo">rectangle</button>
+                    <button  value="circle" data-divbtn="circulo">circle</button>
+                    <button  value="line" data-divbtn="linea">pen_size_2</button>
+                    <button  value="pencil" data-divbtn="lapiz">edit</button>
+                    <button  value="oval" data-divbtn="ovalo"><img /></button>
+                    <button  value="diamond" data-divbtn="rombo">stat_0</button>
+                    <button  value="triangle" data-divbtn="triangulo">change_history</button>
+                    <button  value="pent" data-divbtn="pentagono">pentagon</button>
+                    <button  value="hex" data-divbtn="hexagono">hexagon</button>
+                    <button  data-divbtn="trapezoide"><img width="32" height="32"/></button>
+                    <button  value="text" data-divbtn="text">t</button>
+                    <button  value="fill" id="fill" title="Relleno">water_drop</button>
+                </div>
+            </div>
+        </div>
+        <div class="contonedor-menu">
+            <header>
+                <span class="title">Guardar y abrir:</span>
+                <span class="image"></span>
+            </header>
+        </div>
+        <div class="contonedor-menu">
+            <header>
+                <span class="title">Herramientas:</span>
+                <span class="herramienta"></span>
+            </header>
+            <div class="descripcion">
+                <div class="tools_sect">
+                    <button id="deshacer">arrow_downward</button>
+                    <button id="rehacer">arrow_upward</button>
+                    <button id="mover">open_with</button>
+                    <button id="ratio">aspect_ratio</button>
+                    <button id="rotar">rotate_90_degrees_cw</button>
+                    <button id="borrador">delete</button>
+                    <button id="borrador_pix">delete_outline</button>
+                    <button id="restablecer">restart_alt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <canvas id="canvas" class="whiteboard"></canvas>
+</div>
+<script type="text/javascript" src="./js/main.js"></script>
+</body>
+</html>
+
+JavaScript
+
+const DibujarElipse = (xc, yc, a, b, angle, size, color) => {
+        for (let theta = 0; theta < 2 * Math.PI; theta += 0.01) {
+            const x = xc + a * Math.cos(theta) * Math.cos(angle) - b * Math.sin(theta) * Math.sin(angle);
+            const y = yc + a * Math.cos(theta) * Math.sin(angle) + b * Math.sin(theta) * Math.cos(angle);
+            paper.fillStyle = color;
+            paper.fillRect(x, y, size, size);
+        }
+    };
+
+const es_un_trapezoide = (mouseX, mouseY, Figure) => {
+        const halfHeight = Figure.heightTrapezoid;
+        const halfTopWidth = Figure.topWidth;
+        const halfBottomWidth = Figure.bottomWidth;
+    
+        const topLeftX = Figure.firstPointX - halfTopWidth;
+        const topLeftY = Figure.firstPointY - halfHeight;
+        const topRightX = Figure.firstPointX + halfTopWidth;
+        const topRightY = Figure.firstPointY - halfHeight;
+        const bottomRightX = Figure.firstPointX + halfBottomWidth;
+        const bottomRightY = Figure.firstPointY + halfHeight;
+        const bottomLeftX = Figure.firstPointX - halfBottomWidth;
+        const bottomLeftY = Figure.firstPointY + halfHeight;
+    
+        const rotatedTopLeft = rotatePoint(topLeftX, topLeftY, Figure.firstPointX, Figure.firstPointY, Figure.angle);
+        const rotatedTopRight = rotatePoint(topRightX, topRightY, Figure.firstPointX, Figure.firstPointY, Figure.angle);
+        const rotatedBottomRight = rotatePoint(bottomRightX, bottomRightY, Figure.firstPointX, Figure.firstPointY, Figure.angle);
+        const rotatedBottomLeft = rotatePoint(bottomLeftX, bottomLeftY, Figure.firstPointX, Figure.firstPointY, Figure.angle);
+    
+        const trapezoidPolygon = [rotatedTopLeft, rotatedTopRight, rotatedBottomRight, rotatedBottomLeft];
+    
+        let inside = false;
+        for (let i = 0, j = trapezoidPolygon.length - 1; i < trapezoidPolygon.length; j = i++) {
+            const xi = trapezoidPolygon[i].x, yi = trapezoidPolygon[i].y;
+            const xj = trapezoidPolygon[j].x, yj = trapezoidPolygon[j].y;
+    
+            const intersect = ((yi > mouseY) !== (yj > mouseY)) &&
+                (mouseX < (xj - xi) * (mouseY - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+    
+        return inside;
+    };
+
+const mouse_en_figura = (startX, startY, Figure) => {
+        let x1, y1, x2, y2, numerator, denominator, distance, angle, width;
+        switch (Figure.type) {
+            case 'line':
+                x1 = Figure.firstPointX;
+                y1 = Figure.firstPointY;
+                x2 = Figure.finalPointX;
+                y2 = Figure.finalPointY;
+    
+                numerator = Math.abs((y2 - y1) * startX - (x2 - x1) * startY + x2 * y1 - y2 * x1);
+                denominator = Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+                distance = numerator / denominator;
+    
+                const epsilon = 2;
+                if (distance <= epsilon) {
+                    return true;
+                }
+                break;
+            case 'diamond':
+                const halfWidth = Figure.width_rhombus;
+                distance = Math.sqrt(Math.pow(startX - Figure.firstPointX, 2) + Math.pow(startY - Figure.firstPointY, 2));
+                if (distance < halfWidth / 2) {
+                    return true;
+                }
+                break;
+            case 'trapezoid':
+                return is_in_trapezoid(startX, startY, Figure);
+            case 'square':
+                const lengthX = Math.abs(Figure.finalPointX - Figure.firstPointX);
+                const lengthY = Math.abs(Figure.finalPointY - Figure.firstPointY);
+                const length = Math.min(lengthX, lengthY);
+                if (startX >= Figure.firstPointX && startX <= Figure.firstPointX + length * Figure.OrientX && startY >= Figure.firstPointY && startY <= Figure.firstPointY + length * Figure.OrientY) {
+                    return true;
+                }
+                break;
+            case 'circle':
+                distance = Math.sqrt(Math.pow(startX - Figure.firstPointX, 2) + Math.pow(startY - Figure.firstPointY, 2));
+                if (distance < Figure.radius) {
+                    return true;
+                }
+                break;
+            case 'rectangle':
+                width = Math.abs(Figure.finalPointX - Figure.firstPointX);
+                const height = Math.abs(Figure.finalPointY - Figure.firstPointY);
+                if ((startX >= Figure.firstPointX && startX <= Figure.firstPointX + width * Figure.OrientX) && (startY >= Figure.firstPointY && startY <= Figure.firstPointY + height * Figure.OrientY)) {
+                    return true;
+                }
+                break;
+            case 'oval':
+                const distanceX = Math.sqrt(Math.pow(startX - Figure.firstPointX, 2));
+                const distanceY = Math.sqrt(Math.pow(startY - Figure.firstPointY, 2));
+                if (distanceX <= Figure.a && distanceY <= Figure.b) {
+                    return true;
+                }
+                break;
+            case 'pent':
+                distance = Math.sqrt(Math.pow(startX - Figure.firstPointX, 2) + Math.pow(startY - Figure.firstPointY, 2));
+                angle = Math.atan2(Figure.finalPointY - startY, Figure.finalPointX - startX);
+                if (distance < Figure.radius && angle !== Figure.angle * 5) {
+                    console.log(Figure.angle * 5);
+                    return true;
+                } else {
+                    console.log(angle);
+                }
+                break;
+            case 'hex':
+                distance = Math.sqrt(Math.pow(startX - Figure.firstPointX, 2) + Math.pow(startY - Figure.firstPointY, 2));
+                angle = Math.atan2(Figure.finalPointY - startY, Figure.finalPointX - startX);
+                if (distance <= Figure.radius) {
+                    return true;
+                }
+                break;
+            case 'text':
+                if (startY === Figure.firstPointY) {
+                    return true;
+                }
+                break;
+            case 'pencil':
+                break;
+        }
+        return false;
+    }; //Aqui termina la función para verificar si el mouse está dentro de la figura, Termina
+
+const Escalar = (currFig, pos) => {
+        let { type } = currFig;
+        switch (type) {
+            case 'square': // Escalar un cuadrado
+                let lengthX = Math.abs(pos.x - currFig.firstPointX);
+                let lengthY = Math.abs(pos.y - currFig.firstPointY);
+                let length = Math.min(lengthX, lengthY);
+                currFig.OrientX = Math.sign(pos.x - currFig.firstPointX);
+                currFig.OrientY = Math.sign(pos.y - currFig.firstPointY);
+                currFig.len = length;
+                break; 
+            case 'line':
+                let dx = pos.x - currFig.firstPointX;
+                let dy = pos.y - currFig.firstPointY;
+                currFig.firstPointX += dx;
+                currFig.firstPointY -= dy;
+                currFig.finalPointX -= dx;
+                currFig.finalPointY += dy;
+                break;
+            case 'circle': // Escalar un círculo
+                let radius = Math.sqrt(Math.pow(pos.x - currFig.firstPointX, 2) + Math.pow(pos.y - currFig.firstPointY, 2));
+                currFig.radius = radius;
+                break;
+            case 'oval': // Escalar una elipse
+                currFig.a = Math.abs(pos.x - currFig.firstPointX);
+                currFig.b = Math.abs(pos.y - currFig.firstPointY);
+                break;
+            case 'rectangle': // Escalar un rectángulo
+                currFig.widthRect = Math.abs(pos.x - currFig.firstPointX);
+                currFig.heightRect = Math.abs(pos.y - currFig.firstPointY);
+                currFig.OrientX = Math.sign(pos.x - currFig.firstPointX);
+                currFig.OrientY = Math.sign(pos.y - currFig.firstPointY);
+                break;
+            case 'pent': // Escalar un pentágono
+            case 'hex': // Escalar un hexágono
+                let rad = Math.sqrt(Math.pow(pos.x - currFig.firstPointX, 2) + Math.pow(pos.y - currFig.firstPointY, 2));
+                currFig.radius = rad;
+                break;
+            case 'trapezoid': // Escalar un trapecio
+                currFig.bottomWidth = Math.abs(pos.x - currFig.firstPointX);
+                currFig.topWidth = currFig.bottomWidth / 2;
+                currFig.heightTrapezoid = Math.abs(pos.y - currFig.firstPointY);
+                break;
+            case 'diamond': // Escalar un rombo
+                currFig.widthRhombus = Math.abs(pos.x - currFig.firstPointX);
+                currFig.heightRhombus = Math.abs(pos.y - currFig.firstPointY);
+                break;
+        }
+    }; // Función para escalar la figura, termina
+
+ const rotarFigura = (curr_fig, pos) => {
+        let { type, firstPointX, firstPointY } = curr_fig;
+        let angle;
+        switch (type) {
+            case 'square':
+            case 'oval':
+            case 'rectangle':
+            case 'pent':
+            case 'hex':
+            case 'trapezoid':
+            case 'diamond':
+                angle = Math.atan2(pos.y - firstPointY, pos.x - firstPointX);
+                curr_fig.angle = angle;
+                break;
+            case 'line':
+                let dx = pos.x - firstPointX;
+                let dy = pos.y - firstPointY;
+                curr_fig.firstPointX += dx;
+                curr_fig.firstPointY += dy;
+                curr_fig.finalPointX += dx;
+                curr_fig.finalPointY += dy;
+                break;
+            case 'circle':
+                let radius = Math.sqrt(Math.pow(pos.x - firstPointX, 2) + Math.pow(pos.y - firstPointY, 2));
+                curr_fig.radius = radius;
+                break;
+        }
+    }; // Función para rotar la figura, termina
+
+ const DDA = (x0, y0, x1, y1, size, color) => {
+        let dx, dy, incx, incy, x, y, p;
+        dx = x1 - x0;
+        dy = y1 - y0;
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            p = Math.abs(dx);
+        } else {
+            p = Math.abs(dy);
+        }
+        incx = dx / p;
+        incy = dy / p;
+        x = x0;
+        y = y0;
+        for (let i = 0; i <= p; i++) {
+            paper.fillStyle = color;
+            paper.fillRect(x, y, size, size);
+            x += incx;
+            y += incy;
+        }
+    };
+
+ const cuadrado = (x0, y0, length, OrientX, OrientY, angle, color, size) => {
+        if (angle !== 0) {
+            const x = x0 - length / 2;
+            const y = y0 - length / 2;
+            const x1 = x0 + length / 2;
+            const y1 = y0 - length / 2;
+            const x2 = x0 + length / 2;
+            const y2 = y0 + length / 2;
+            const x3 = x0 - length / 2;
+            const y3 = y0 + length / 2;
+    
+            const rotatedX0Y0 = rotatePoint(x, y, x0, y0, angle);
+            const rotatedX1Y1 = rotatePoint(x1, y1, x0, y0, angle);
+            const rotatedX2Y2 = rotatePoint(x2, y2, x0, y0, angle);
+            const rotatedX3Y3 = rotatePoint(x3, y3, x0, y0, angle);
+    
+            DDA(rotatedX0Y0.x, rotatedX0Y0.y, rotatedX1Y1.x, rotatedX1Y1.y, size, color);
+            DDA(rotatedX1Y1.x, rotatedX1Y1.y, rotatedX2Y2.x, rotatedX2Y2.y, size, color);
+            DDA(rotatedX2Y2.x, rotatedX2Y2.y, rotatedX3Y3.x, rotatedX3Y3.y, size, color);
+            DDA(rotatedX3Y3.x, rotatedX3Y3.y, rotatedX0Y0.x, rotatedX0Y0.y, size, color);
+        } else {
+            const x1 = x0 + length * OrientX;
+            const y1 = y0 + length * OrientY;
+            DDA(x0, y0, x1, y0, size, color);
+            DDA(x1, y0, x1, y1, size, color);
+            DDA(x1, y1, x0, y1, size, color);
+            DDA(x0, y1, x0, y0, size, color);
+        }
+    };
+
+ const Rectangulo = (x0, y0, width, height, OrientX, OrientY, angle, size, color) => {
+        if (angle !== 0) {
+            const x = x0 - width / 2;
+            const y = y0 - height / 2;
+            const x1_1 = x0 + width / 2;
+            const y1_1 = y0 - height / 2;
+            const x2 = x0 + width / 2;
+            const y2 = y0 + height / 2;
+            const x3 = x0 - width / 2;
+            const y3 = y0 + height / 2;
+    
+            const rotatedX0Y0 = rotatePoint(x, y, x0, y0, angle);
+            const rotatedX1Y1 = rotatePoint(x1_1, y1_1, x0, y0, angle);
+            const rotatedX2Y2 = rotatePoint(x2, y2, x0, y0, angle);
+            const rotatedX3Y3 = rotatePoint(x3, y3, x0, y0, angle);
+    
+            DDA(rotatedX0Y0.x, rotatedX0Y0.y, rotatedX1Y1.x, rotatedX1Y1.y, size, color);
+            DDA(rotatedX1Y1.x, rotatedX1Y1.y, rotatedX2Y2.x, rotatedX2Y2.y, size, color);
+            DDA(rotatedX2Y2.x, rotatedX2Y2.y, rotatedX3Y3.x, rotatedX3Y3.y, size, color);
+            DDA(rotatedX3Y3.x, rotatedX3Y3.y, rotatedX0Y0.x, rotatedX0Y0.y, size, color);
+        } else {
+            const x = x0 + width * OrientX;
+            const y = y0 + height * OrientY;
+            DDA(x0, y0, x, y0, size, color);
+            DDA(x, y0, x, y, size, color);
+            DDA(x, y, x0, y, size, color);
+            DDA(x0, y, x0, y0, size, color);
+        }
+    };
+
+const Poligono = (radio, centerX, centerY, sides, angle, size, color) => {
+        const initialAngle = (2 * Math.PI) / sides;
+        let lastX = 0, lastY = 0;
+    
+        for (let i = 0; i < sides; i++) {
+            const step = i * initialAngle + angle;
+            const points = grade_to_points(centerX, centerY, radio, step);
+            
+            if (i > 0) {
+                DDA(lastX, lastY, points.x, points.y, size, color);
+            }
+    
+            lastX = points.x;
+            lastY = points.y;
+        }
+    
+        const finalPoints = grade_to_points(centerX, centerY, radio, angle);
+        DDA(lastX, lastY, finalPoints.x, finalPoints.y, size, color);
+    };
+
+ const Rombo = (x0, y0, length, angle, size, color) => {
+        const halfDiagonal = length;
+        const xOffset = halfDiagonal * Math.cos(Math.PI / 4);
+        const yOffset = halfDiagonal * Math.sin(Math.PI / 4);
+    
+        const rotatedX0Y0 = rotatePoint(x0, y0 - halfDiagonal, x0, y0, angle);
+        const rotatedX1Y1 = rotatePoint(x0 + xOffset, y0, x0, y0, angle);
+        const rotatedX2Y2 = rotatePoint(x0, y0 + halfDiagonal, x0, y0, angle);
+        const rotatedX3Y3 = rotatePoint(x0 - xOffset, y0, x0, y0, angle);
+    
+        DDA(rotatedX0Y0.x, rotatedX0Y0.y, rotatedX1Y1.x, rotatedX1Y1.y, size, color);
+        DDA(rotatedX1Y1.x, rotatedX1Y1.y, rotatedX2Y2.x, rotatedX2Y2.y, size, color);
+        DDA(rotatedX2Y2.x, rotatedX2Y2.y, rotatedX3Y3.x, rotatedX3Y3.y, size, color);
+        DDA(rotatedX3Y3.x, rotatedX3Y3.y, rotatedX0Y0.x, rotatedX0Y0.y, size, color);
+    };
+
+ const Trapecio = (x, y, topWidth, bottomWidth, height, angle,size,color) => {
+        var halfHeight = height;
+        var halfTopWidth = topWidth;
+        var halfBottomWidth = bottomWidth;
+
+        var topLeftX = x - halfTopWidth;
+        var topLeftY = y - halfHeight;
+        var topRightX = x + halfTopWidth;
+        var topRightY = y - halfHeight;
+        var bottomRightX = x + halfBottomWidth;
+        var bottomRightY = y + halfHeight;
+        var bottomLeftX = x - halfBottomWidth;
+        var bottomLeftY = y + halfHeight;
+
+        var rotatedTopLeft = rotatePoint(topLeftX, topLeftY, x, y, angle);
+        var rotatedTopRight = rotatePoint(topRightX, topRightY, x, y, angle);
+        var rotatedBottomRight = rotatePoint(bottomRightX, bottomRightY, x, y, angle);
+        var rotatedBottomLeft = rotatePoint(bottomLeftX, bottomLeftY, x, y, angle);
+
+        DDA(rotatedTopLeft.x,rotatedTopLeft.y,rotatedTopRight.x, rotatedTopRight.y,size,color);
+        DDA(rotatedTopRight.x, rotatedTopRight.y,rotatedBottomRight.x, rotatedBottomRight.y,size,color);
+        DDA(rotatedBottomRight.x, rotatedBottomRight.y,rotatedBottomLeft.x, rotatedBottomLeft.y,size,color);
+        DDA(rotatedBottomLeft.x, rotatedBottomLeft.y,rotatedTopLeft.x,rotatedTopLeft.y,size,color)
+    }
+
+ const Figura = () => {
+        paper.clearRect(0, 0, canvas.width, canvas.height);
+    
+        figure.forEach(fig => {
+            switch (fig.type) {
+                case 'action':
+                    if (fig.subtype === 'erase') {
+                        fig.erasePoints.forEach(point => {
+                            paper.clearRect(point.x, point.y, 4, 4);
+                        });
+                    }
+                    break;
+                case 'lapiz':
+                    redrawpoints(fig, fig.sinsel_size, fig.color);
+                    break;
+                case 'circulo':
+                    circleBres(fig.firstPointX, fig.firstPointY, fig.radius, fig.sinsel_size, fig.color);
+                    break;
+                case 'cuadrado':
+                    Cuadrado(fig.firstPointX, fig.firstPointY, fig.len, fig.OrientX, fig.OrientY, fig.angle, fig.color, fig.sinsel_size);
+                    break;
+                case 'rectangulo':
+                    Rectangulo(fig.firstPointX, fig.firstPointY, fig.finalPointX, fig.finalPointY, fig.width_rect, fig.height_rect, fig.OrientX, fig.OrientY, fig.angle, fig.sinsel_size, fig.color);
+                    break;
+                case 'ovalo':
+                    Elipse(fig.firstPointX, fig.firstPointY, fig.a, fig.b, fig.angle, fig.sinsel_size, fig.color);
+                    break;
+                case 'linea':
+                    DDA(fig.firstPointX, fig.firstPointY, fig.finalPointX, fig.finalPointY, fig.sinsel_size, fig.color);
+                    break;
+                case 'triengulo':
+                    Polygono(fig.radius, fig.firstPointX, fig.firstPointY, fig.sides, fig.angle, fig.sinsel_size, fig.color);
+                    break;
+                case 'rombo':
+                    Rombo(fig.firstPointX, fig.firstPointY, fig.width_rhombus, fig.angle, fig.sinsel_size, fig.color);
+                    break;
+                case 'trapezoid':
+                    Trapecio(fig.firstPointX, fig.firstPointY, fig.topWidth, fig.bottomWidth, fig.heightTrapezoid, fig.angle, fig.sinsel_size, fig.color);
+                    break;
+                case 'texto':
+                    Texto(fig.text_value, fig.firstPointX, fig.firstPointY);
+                    break;
+            }
+        });
+    };
+
+USE ALGORITMO Bresenham
+
+
+
+
+
+
+
+
+

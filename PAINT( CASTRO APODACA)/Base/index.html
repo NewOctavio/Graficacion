@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style/estilo1.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <center>   
+            <canvas id="canvas" width="2000" height=1700"></canvas><br>
+        </center>
+<br>
+        <div id="Seccion_Colores">
+        <center>
+                <p>Paleta de colores</p>
+            <button style="background-color: yellow" id="amarillo" class="btn-color" onclick="debug_color()"></button>
+            <button style="background-color: rgb(9, 216, 9)" id="verde" class="btn-color" onclick="defColor('rgb(10, 217, 9)')"></button>
+            <br>
+            <button style="background-color: rgb(0, 170, 232)" id="azul_c" class="btn-color" onclick="defColor('rgb(0, 171, 232)')"></button>
+            <button style="background-color: rgb(255, 96, 123)" id="rosa_c" class="btn-color" onclick="defColor('rgb(255, 97, 123)')"></button>
+            <br>
+            <button style="background-color: rgb(209, 1, 209)" id="morado_c" class="btn-color" onclick="defColor('rgb(209, 1, 209)')"></button>
+            <button style="background-color: rgb(186, 79, 79)" id="marron" class="btn-color" onclick="defColor('rgb(186, 79, 79)')"></button>
+            <br>
+            <button style="background-color:white" id="blanco" class="btn-color" onclick="defColor('white')"></button>
+            <button style="background-color: rgb(200, 0, 0);" id="rojo_c" class="btn-color" onclick="defColor('rgb(200, 0, 0)')"></button>
+            <br>
+            <button style="background-color: rgb(221, 221, 14);"id="amarillo_c" class="btn-color" onclick="defColor('rgb(221, 221, 14)')"></button>
+            <button style="background-color: green;"id="verde_c" class="btn-color" onclick="defColor('green')"></button>
+            <br>
+            <button style="background-color: blue;"id="azul" class="btn-color" onclick="defColor('blue')"></button>
+            <button  style="background-color: pink;" id="rosa" class="btn-color" onclick="defColor('pink')"></button>
+            <br>
+            <button  style="background-color: purple;" id="morado" class="btn-color" onclick="defColor('purple')"></button>
+            <button  style="background-color: rgb(97, 17, 17);" id="marron_c" class="btn-color" onclick="defColor('rgb(97, 17, 17)')"></button>
+            <button  style="background-color: black;"id="negro" class="btn-color" onclick="defColor('black')"></button>
+        </center>
+        <div id="Herramientas">
+            <input type="file" name="ar_dibujo" id="abrir_ar">            
+        </div>
+        </div>
+
+        <br>
+
+        
+        <style type="text/css">body { cursor: url('data:image/x-icon;base64,AAACAAEAICAQAAEABQDoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAACwsLAAAAAAAFRUVAD6+voAxMTEANbW1gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERIiEREREREREREREREREREiAiERERERERERERERERERIAACEREREREREREREiIiEiAAACEREREREREREiIAACIgBUACERERERERESIAAAAAIFNVQCERERERERIABEVUAAJTMzVSEREREREgAFUzNVAAMzMzMhERERERIFUzMzM1UAMzMzUhEREREgQzADMzMzMFMzMzIRERERIDMiAzMzMzNAUzMzIRERESUyIEMzMzMzMCMzNSEREREiIgQzMzMzMzUFMzIREREREiBFMzMyMzMzQjMiERERERIEUzMyIzNTMyEiIREREREgRTMzIjMyMzMhIRERERESBFMzMzMzIzMzIRERERERIEUzMzMzMiMyMyEREREREgRTMzUjMzMzIzIRERERERJFMzNSAzMzMiMyERERERESQzM1JDMzAzMzAhEREREREjMzMhIzMjMzMyEREREREREjMyERIiM1I1IREREREREREiIRERESIhIhERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERH//////////////////8f///+D////gf//wQD//wAAf/4AAD/8AAAf+AAAH/gAAA/wAAAP8AAAB/AAAAfwAAAP+AAAD/gAAR/wAAF/4AAB/8AAAf+AAAP/gAAD/4AAA/+AgAf/wcAP/+P4n////////////////////////////w=='), auto; }</style>
+        
+        <script src="Scripts/debug.js"></script>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paint </title>
+    <link rel="stylesheet" href="css/paint.css">
+</head>
+<body>
+    <div id="botones" class="grid-container">
+        <div  style="background-color: rgb(233, 235, 236);" id="colores1" class="grid-item">
+            
+        
+            <input type="file" name="ar_dibujo" id="abrir_ar">            
+            <button style="background-color: rgb(121, 221, 118);" class="" onclick="limpiar()"><img class="" src="limpiar.png" alt=""></button>
+            <button style="background-color: rgb(121, 221, 118)" class="" onclick="guardar(0)"><img class="" src="guardar.png" alt=""></button>
+            <button class="" onclick="guardar(1)">Guardar como PNG</button>
+            <button style="background-color: turquoise;" class="" onclick="actualizar(1)"><img class="" src="atras.png" alt=""></button>
+            <button style="background-color: turquoise;"id="rehacer" disabled class="" onclick="actualizar(2)"><img class="" src="adelante.png" alt=""></button>
+            <button style="background-color: red" id="rojo" class="btn-color" onclick="defColor('red')"></button>
+            <button style="background-color: yellow" id="amarillo" class="btn-color" onclick="defColor('yellow')"></button>
+            <button style="background-color: rgb(9, 216, 9)" id="verde" class="btn-color" onclick="defColor('rgb(10, 217, 9)')"></button>
+            <button style="background-color: rgb(0, 170, 232)" id="azul_c" class="btn-color" onclick="defColor('rgb(0, 171, 232)')"></button>
+            <button style="background-color: rgb(255, 96, 123)" id="rosa_c" class="btn-color" onclick="defColor('rgb(255, 97, 123)')"></button>
+            <button style="background-color: rgb(209, 1, 209)" id="morado_c" class="btn-color" onclick="defColor('rgb(209, 1, 209)')"></button>
+            <button style="background-color: rgb(186, 79, 79)" id="marron" class="btn-color" onclick="defColor('rgb(186, 79, 79)')"></button>
+            <button style="background-color:white" id="blanco" class="btn-color" onclick="defColor('white')"></button>
+            <button style="background-color: rgb(200, 0, 0);" id="rojo_c" class="btn-color" onclick="defColor('rgb(200, 0, 0)')"></button>
+            <button style="background-color: rgb(221, 221, 14);"id="amarillo_c" class="btn-color" onclick="defColor('rgb(221, 221, 14)')"></button>
+            <button style="background-color: green;"id="verde_c" class="btn-color" onclick="defColor('green')"></button>
+            <button style="background-color: blue;"id="azul" class="btn-color" onclick="defColor('blue')"></button>
+            <button  style="background-color: pink;" id="rosa" class="btn-color" onclick="defColor('pink')"></button>
+            <button  style="background-color: purple;" id="morado" class="btn-color" onclick="defColor('purple')"></button>
+            <button  style="background-color: rgb(97, 17, 17);" id="marron_c" class="btn-color" onclick="defColor('rgb(97, 17, 17)')"></button>
+            <button  style="background-color: black;"id="negro" class="btn-color" onclick="defColor('black')"></button>
+            <button style="background-color: rgb(93, 173, 226 );" id="btn_linea" class="figura" onclick="cambiar_figura(1)"><img class="icono-f" src="linea.png" alt="Línea"></button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" onclick="cambiar_figura(2)"><img class="icono-f" src="circulo.png" alt="Círculo"  ></button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" onclick="cambiar_figura(3)"><img class="icono-f" src="elipse.png" alt="Elipse"></button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" onclick="cambiar_figura(0)"><img class="icono-f" src="lapiz.png" alt="Lápiz"></button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" onclick="cambiar_figura(4)">Poligono: </button>
+            <input type="number" value="3" id="pol_l" oninput="defLadosP(this.value);"> 
+            Ancho: <input type="range" id="grosor" oninput="defGrosor(this.value);" min="1" max="20" value="1">
+            <button class="" onclick="moverAtras()">Mover hacia atrás</button>
+            <button class="" onclick="moverAdelante()">Mover hacia adelante</button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" onclick="accion()"><img class="" src="move.png" alt=""></button>
+            <button style="background-color: rgb(93, 173, 226 );" class="figura" id="btnBorrar" disabled="true" onclick="eliminarFig()"><img class="" src="eliminar.png" alt=""></button>
+            
+        <div class="grid-item" id="panel_actual">
+            <label></label> <br>
+            <img id="figura_a" class="icono-f" src="lapiz.png" alt="Lápiz">
+            <label id="pol_s"></label>
+            <label id="ancho" class="actual">Valor del ancho: </label>
+            <label id="lblColor" class="actual">Color: </label>
+            <button id="color" class="btn-color actual"></button>
+            <div>
+            </div>
+        </div>
+            <br>
+       
+
+
+
+    </div>
+    <div id="lienzo">
+        <canvas id="maincanvas"></canvas>
+    </div>
+
+    <script type="text/javascript" src="linea.js"></script>
+</body>
+</html>
